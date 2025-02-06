@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\VSProjects\\cppgame\\Project1\\",
+  "WorkspaceRootPath": "D:\\VSProjects\\onehour_game\\cppgame\\1\\Project1\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{83DC858F-C101-469C-A5BC-4F05E7A86ADF}|Project1.vcxproj|D:\\VSProjects\\cppgame\\Project1\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{83DC858F-C101-469C-A5BC-4F05E7A86ADF}|Project1.vcxproj|D:\\VSProjects\\onehour_game\\cppgame\\1\\Project1\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{83DC858F-C101-469C-A5BC-4F05E7A86ADF}|Project1.vcxproj|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
@@ -20,11 +20,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "main.cpp",
-              "DocumentMoniker": "D:\\VSProjects\\cppgame\\Project1\\main.cpp",
+              "DocumentMoniker": "D:\\VSProjects\\onehour_game\\cppgame\\1\\Project1\\main.cpp",
               "RelativeDocumentMoniker": "main.cpp",
-              "ToolTip": "D:\\VSProjects\\cppgame\\Project1\\main.cpp",
+              "ToolTip": "D:\\VSProjects\\onehour_game\\cppgame\\1\\Project1\\main.cpp",
               "RelativeToolTip": "main.cpp",
-              "ViewState": "AgIAAD8AAAAAAAAAAAAAAEgAAAAWAAAAAAAAAA==",
+              "ViewState": "AgIAAJMAAAAAAAAAAAAAAJ4AAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-02-04T02:16:15.134Z",
               "EditorCaption": ""
