@@ -1,7 +1,9 @@
-// [1]헤더
-#include <stdio.h>
-#include <stdlib.h>
-#include <conio.h>
+// [1]헤더를 인클루드하는 곳
+#include <stdio.h> //[1-1]표준 입출력 헤더를 인클루드한다
+#include <stdlib.h>//[1-2]표준 라이브러리 헤더를 인클루드한다
+#include <string.h>//[1-3]문자열 조작 헤더를 인클루드한다.
+#include <time.h> //[1-4]시간 관리 헤더를 인클루드한다.
+#include <conio.h> //[1-5]콘솔 입출력 헤더를 인클루드한다.
 
 // [2]상수를 정의함.
 
@@ -26,13 +28,15 @@ enum
 
 // [4-1] 캐릭터의 구조체를 선언한다.
 typedef struct {
-	int hp;
-	int maxHp;
-	int mp;
-	int maxMp;
-	char name[4 * 3 + 1];
-	char aa[256];
-	int command;
+	int hp;                 // [4-1-1]HP
+	int maxHp;              // [4-1-2]최대 HP
+	int mp;                 // [4-1-3]MP
+	int maxMp;              // [4-1-4]최대 MP
+	int attack;             // [4-1-5]공격력
+	char name[4 * 3 + 1];   // [4-1-6]이름
+	char aa[256];           // [4-1-7]아스키아트
+	int command;            // [4-1-8]명령
+	int target;             // [4-1-9]공격 대상
 } CHARACTER;
 
 enum
@@ -53,6 +57,7 @@ CHARACTER monsters[MONSTER_MAX] =
 		15,
 		15,
 		15,
+		3,
 		"Warrior",
 	},
 	//MONSTER_SLIME
@@ -61,6 +66,7 @@ CHARACTER monsters[MONSTER_MAX] =
 		3,
 		0,
 		0,
+		2,
 		"Slime",
 		"/TT|\n"
 		"~~~~"
@@ -170,6 +176,12 @@ void Battle(int _monster)
 	//[6-4-1]몬스터의 상태를 초기화한다.
 	characters[CHARACTER_MONSTER] = monsters[_monster];
 
+	//[6-4-2]플레이어의 공격 대상을 몬스터로 서정한다.
+	characters[CHARACTER_PLAYER].target = CHARACTER_MONSTER;
+
+	//[6-4-3]몬스터의 공격 대상을 플레이어로 설정한다.
+	characters[CHARACTER_MONSTER].target = CHARACTER_PLAYER;
+
 	//[6-4-5]전투 장면의 첫 메시지를 표시한다.
 	printf("%s이[가] 나타났다!\n", characters[CHARACTER_MONSTER].name);
 
@@ -191,23 +203,84 @@ void Battle(int _monster)
 			// [6-4-11]선택된 명령에 따라 분기한다.
 			switch (characters[i].command)
 			{
-			case COMMAND_FIGHT: // Fight
+			case COMMAND_FIGHT: // [6-4-12]싸운다
+			{
+				// [6-4-13]공격을 하는 메시지를 표시한다
 				printf("%s의 공격!\n", characters[i].name);
 
+				// [6-4-14]키보드 입력을 기다린다
+				_getch();
+
+				//[6-4-15] 적에게 주는 데미지를 (계산한다.
+				int damage = 1 + rand() % characters[i].attack;
+
+				//[6-4-16] 적에게 대미지를 준다
+				characters[characters[i].target].hp -= damage;
+
+				//[6-4-17]적의 HP가 음의 값이 되었는지를 판정한다.
+				if (characters[characters[i].target].hp < 0)
+				{
+					//[6-4-18] 적의 Hp를 0으로 한다.
+					characters[characters[i].target].hp = 0;
+				}
+
+				//[6-4-19] 전투 장면의 화면을 다시 그리는 함수를 호출한다
+				DrawBattleScreen();
+
+				//[6-4-20] 적에게 대미지를 주었따는 메시지를 표시한다.
+				printf("%s에게 %d의 데미지!\n",
+					characters[characters[i].target].name,
+					damage);
+				//[6-4-21] 키보드 입력을 기다린다.
 				_getch();
 				break;
+			}
 			case COMMAND_SPELL: // Spell the magic
 				break;
 			case COMMAND_RUN:	// Run away
 				break;
 			}
+			
+			// [6-4-39] 공격 대상을 쓰러뜨렸는지 판정한다.
+			if (characters[characters[i].target].hp <= 0)
+			{
+				// [6-4-40] 공격 대상에 따라 처리를 분기시킨다.
+				switch (characters[i].target)
+				{
+					// [6-4-41] 플레이어라면
+				case CHARACTER_PLAYER:
+					break;
+
+					//[6-4-43] 몬스터라면
+				case CHARACTER_MONSTER:
+
+					//[6-4-44] 몬스터의 아스키아트를 아무것도 표시하지 않게 다시 작성한다.
+					strcpy_s(characters[characters[i].target].aa, "\n");
+
+					//[6-4-45] 전투 장면의 화면을 다시 그리는 함수를 호출한다.
+					DrawBattleScreen();
+
+					// [6-4-46]몬스터를 쓰러뜨린 메시지를 표시한다
+					printf("%s을(를) 쓰러뜨렸다!\n", characters[characters[i].target].name);
+
+					break;
+				}
+
+				// [6-4-47] 키보드 입력을 기다린다
+				_getch();
+
+				//[6-4-48] 전투 장면의 함수를 빠져나간다.
+				return;
+			}
 		}
 	}
 }
 
+//[6-6] 프로그램의 실행 시작점을 선언한다.
 int main()
 {
-	//call for battle
+	//[6-6-1]난수를 넣는다.
+	srand((unsigned int)time(NULL));
 	Init();
 	Battle(MONSTER_SLIME);
 }
