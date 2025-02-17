@@ -6,23 +6,31 @@
 #include <conio.h> //[1-5]콘솔 입출력 헤더를 인클루드한다.
 
 // [2]상수를 정의함.
-
+#define SPELL_COST (3)	//[2-1] 주문의 소비 MP를 정의한다
 // [3]열거 상수를 정의하는 곳
 
+// [3-1] 몬스터의 종류를 정의한다.
+enum
+{
+	MONSTER_PLAYER, // [3-1-1]플레이어
+	MONSTER_SLIME,  // [3-1-2]슬라임
+	MONSTER_BOSS,   // [3-1-3]마왕
+	MONSTER_MAX		// [3-1-4]몬스터 종류의 수
+};
 // [3-2] 캐릭터의 종류를 정의한다.
 enum
 {
-	MONSTER_PLAYER,
-	MONSTER_SLIME,
-	MONSTER_MAX
+	CHARACTER_PLAYER,	// [3-2-1]플레이어
+	CHARACTER_MONSTER,	// [3-2-2]몬스터
+	CHARACTER_MAX		// [3-2-3]캐릭터 종류의 수
 };
 // [3-3] 명령의 종류를 정의한다.
 enum
 {
-	COMMAND_FIGHT,
-	COMMAND_SPELL,
-	COMMAND_RUN,
-	COMMAND_MAX
+	COMMAND_FIGHT,	// [3-3-1]싸운다
+	COMMAND_SPELL,	// [3-3-2]주문
+	COMMAND_RUN,	// [3-3-3]도망친다
+	COMMAND_MAX		// [3-3-4]명령의 종류 수
 };
 // [4]구조체를 선언하는 곳
 
@@ -38,29 +46,22 @@ typedef struct {
 	int command;            // [4-1-8]명령
 	int target;             // [4-1-9]공격 대상
 } CHARACTER;
-
-enum
-{
-	CHARACTER_PLAYER,
-	CHARACTER_MONSTER,
-	CHARACTER_MAX
-};
 	
-// [5[]define variable] 변수를 선언하는 곳
+// [5] 변수를 선언하는 곳
 
-// [5-1] 몬스터 상태의 배열을 선언한다.
+// [5-1]몬스터 상태의 배열을 선언한다
 CHARACTER monsters[MONSTER_MAX] =
 {
-	//MONSTER_PLAYER
+	// [5-1-1]MONSTER_PLAYER    플레이어
 	{
+		100,
+		100,
 		15,
 		15,
-		15,
-		15,
-		3,
+		40,
 		"Warrior",
 	},
-	//MONSTER_SLIME
+	// [5-1-8]MONSTER_SLIME 슬라임
 	{
 		3,
 		3,
@@ -71,6 +72,19 @@ CHARACTER monsters[MONSTER_MAX] =
 		"/TT|\n"
 		"~~~~"
 	},
+	// [5-1-16]MONSTER_BOSS 마왕
+	{
+		255,        // [5-1-17]int hp               HP
+		255,        // [5-1-18]int maxHp            최대 HP
+		0,          // [5-1-19]int mp               MP
+		0,          // [5-1-20]int maxMp            최대 MP
+		50,         // [5-1-21]int attack           공격력
+		"마왕",     // [5-1-22]char name[4 * 3 + 1] 이름
+
+		// [5-1-23]char aa[256] 아스키아트
+		 "　　Ａ＠Ａ\n"
+		"ψ（▼皿▼）ψ"
+	}
 };
 
 // [5-2] 캐릭터의 배열을 선언한다.
@@ -124,6 +138,8 @@ void DrawBattleScreen()
 //[6-3]명령을 선택하는 함수
 void SelectCommand()
 {
+	// [6-3-1] 플레이어의 명령을 초기화한다
+	characters[CHARACTER_PLAYER].command = COMMAND_FIGHT;
 	// [6-3-2]명령을 결정할 때까지 루프
 	while (1)
 	{
@@ -233,11 +249,61 @@ void Battle(int _monster)
 					damage);
 				//[6-4-21] 키보드 입력을 기다린다.
 				_getch();
+
 				break;
 			}
-			case COMMAND_SPELL: // Spell the magic
+			case COMMAND_SPELL: // [6-4-22] 주문
+
+				//[6-4-23] MP가 충분하지 판정한다
+				if (characters[i].mp < SPELL_COST)
+				{
+					// [6-4-24]MP가 부족하다는 메시지를 표시한다.
+					printf("MP가 부족하다.\n");
+
+					//[6-4-25] 키보드 입력을 기다린다.
+					_getch();
+
+					//[6-4-26] 주문을 외우는 처리에서 빠져나온다.
+					break;
+				}
+
+				//[6-4-27] MP를 소모시킨다.
+				characters[i].mp -= SPELL_COST;
+
+				//[6-4-28] 화면을 다시그린다.
+				DrawBattleScreen();
+
+				//[6-4-29] 주문을 외운 메시지를 표시한다.
+				printf("%s은(는) 주문을 외웠다;!\n", characters[i].name);
+
+				// [6-4-30] 키보드 입력을 기다린다.
+				_getch();
+
+				// [6-4-31] HP를 회복시킨다.
+				characters[i].hp = characters[i].maxHp;
+
+				//[6-4-32] 전투 장면의 화면을 다시 그린다.
+				DrawBattleScreen();
+
+				//[6-4-33] HP가 회복된 메시지를 표시한다.
+				printf("%s의 상처가 회복되었다.\n", characters[i].name);
+
+				// [6-4-34] 키보드 입력을 기다린다.
+				_getch();
+
 				break;
+
 			case COMMAND_RUN:	// Run away
+
+				// [6-4-36]도망쳤다는 메시지를 표시한다.
+				printf("%s은(는) 도망쳤다.\n", characters[i].name);
+
+				// [6-4-37]키보드 입력을 기다린다
+				_getch();
+
+				// [6-4-38]전투 처리를 빠져나간다.
+				return;
+
 				break;
 			}
 			
@@ -249,6 +315,9 @@ void Battle(int _monster)
 				{
 					// [6-4-41] 플레이어라면
 				case CHARACTER_PLAYER:
+
+					//[6-4-42] 플레이어가 사망했다는 메시지를 표시한다
+					printf("당신은 사망했습니다.");
 					break;
 
 					//[6-4-43] 몬스터라면
@@ -282,5 +351,5 @@ int main()
 	//[6-6-1]난수를 넣는다.
 	srand((unsigned int)time(NULL));
 	Init();
-	Battle(MONSTER_SLIME);
+	Battle(MONSTER_BOSS);
 }
